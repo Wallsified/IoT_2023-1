@@ -6,7 +6,7 @@ La placa usada fue una [ESP32 en el IDE de Arduino](https://github.com/espressif
 
 ### Dueños del repo 
 - [Wallsified](https://github.com/Wallsified)
-- 
+- [Carlos-Crea](https://github.com/carlos-crea)
 
 ### Algunos enlaces útiles
 - [IoT con el ESP](http://esp32.net/)
