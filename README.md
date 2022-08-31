@@ -5,8 +5,14 @@ Titulo autoexplicativo. Aqui están las prácticas que hicimos para el curso de 
 La placa usada fue una [ESP32 en el IDE de Arduino](https://github.com/espressif/arduino-esp32) cuyas caracterísiticas completas pueden verse en los archivos del repo. 
 
 ### Dueños del repo 
-- [Wallsified](https://github.com/Wallsified)
-- [Carlos-Crea](https://github.com/carlos-crea)
+- [Wallsified](https://github.com/Wallsified) 
+<!--- Paredes Zamudio Luis Daniel --->
+- [Carlos-Crea](https://github.com/carlos-crea) 
+<!--- González Arceo Carlos Eduardo --->
+### Dependencias del repo
+- IDE de Arduino
+- Python 3.7+ (junto a dependecias a instalar en pip: esptool, pyserial)
+
 
 ### Algunos enlaces útiles
 - [IoT con el ESP](http://esp32.net/)
