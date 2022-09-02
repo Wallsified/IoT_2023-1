@@ -4,8 +4,6 @@
  * sin nada de luz que ninguno se enciende y conforme la luz llega al sensor se van iluminando los demás 
  * leds hasta que los 5 se iluminen por completo.
  * 
- * Ideas: 
- * - Estructura con el array de leds y ligarlo a intervalos de voltaje. Si es un intervalo x, prender n led. 
  *  Código creado por los alumnos
  * - Paredes Zamudio Luis Daniel @Wallsified
  * - González Arceo Carlos Eduardo @Carlos-crea
@@ -26,15 +24,15 @@ void setup() {
 
 void loop() {
   float sensor = 3.3/4096.0 * analogRead(PinADC); //Voltaje = x / Flash Size 
-  int division = sensor/ constante;
-  Serial.println(sensor);
+  int division = sensor/ constante; //La idea es que a cierto voltaje prenda una x cantidad de leds...
+  Serial.println(sensor); //Lo mandamos a la pantalla del serial para ver sus cambios. 
   if(division > 0){
     for(int i=0; i < division; i++){
       digitalWrite(leds[i], HIGH);
     }
   }
   if(division < 5){
-    for(int i=4; i >= division; i--){
+    for(int i=4; i >= division; i--){ //..Y que la misma falta de voltaje, apague otra cantidad y de leds. 
         digitalWrite(leds[i], LOW);
       }
   }

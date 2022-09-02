@@ -42,15 +42,5 @@ void loop() {
     }
 
 
-    //digitalWrite(leds[i], digitalRead(SW2));
+    //Falta objetivo #2
 }
-
-/*
-  for(int i=0; i < 5; i++){
-  digitalWrite(leds[i], digitalRead(SW1));
-  }
-
-  for(int i=5; i >= 0; i--){ //Mayor o igual a 0 para incluir los 5 leds-
-  digitalWrite(leds[i], digitalRead(SW2));
-  }
-*/
