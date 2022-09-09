@@ -12,14 +12,15 @@
 
 #define oneLED 14
 void setup() {
-
   pinMode(oneLED, OUTPUT);
 }
 
 
 void loop() {
   digitalWrite(oneLED, HIGH);   // HIGH = Prendido
-  delay(15);                    // Lo minimo que podemos esperar para que se vea la frecuencia del parpadeo.
+  delay(12);                    // Lo minimo que podemos esperar para que se vea la frecuencia del parpadeo.
   digitalWrite(oneLED, LOW);    // LOW = Apagado
-  delay(15);                    // Se repite el delay para que al loopear el programa se vuelva a prender y así sucesivamente.
+  delay(12);                    // Se repite el delay para que al loopear el programa se vuelva a prender y así sucesivamente.
 }
+
+// Como frecuencia = 1 / Periodo y Periodo = Suma de los delays, entonces f= 41.66667 hz
