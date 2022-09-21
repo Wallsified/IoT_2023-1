@@ -87,13 +87,13 @@ void loop() {
     return; //evitamos cosas de tipo nan en la impresión. 
   }
 
-  if (digitalRead(SW2 == HIGH)) { //here's where everything bugs
+  if (digitalRead(SW2)) { //here's where everything bugs
     BT.print("Nivel de Humedad: ");
     BT.println(h);
   }
 
-  if (digitalRead(SW1 == LOW)) {
-    BT.print("Temperatura en °C ");
+  if (digitalRead(SW1)) {
+    BT.print("Temperatura en °F ");
     BT.println(f);
   }
 }
