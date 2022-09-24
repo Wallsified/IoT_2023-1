@@ -25,12 +25,16 @@
 #define SW2 4
 #define PinADC 34 //LDR en la placa
 const float constante = 0.6; //para el voltaje
+int leds[5] = {14, 27, 26, 25, 33};
+char payback; //hagamos que "payload" mande un char y de ahi a ascci again
 
 DHT dht(DHTPIN, DHTTYPE);
 
 EspMQTTClient client( //Objeto MQTT
-  "Clase_IoT",           //SSID
-  "0123456789",        //Pass
+  "INFINITUMA6A4_2.4",
+  //"Clase_IoT",           //SSID
+  //"0123456789",        //Pass
+  "Zamudiov3!",
   "test.mosquitto.org",   // MQTT broker público (Mosquitto)
   "Paredes&Arceo",          // Nombre de indentificación del cliente
   1883                      // Puerto MQTT
@@ -39,10 +43,11 @@ EspMQTTClient client( //Objeto MQTT
 
 void setup() {
   pinMode(PinADC, INPUT);
-  pinMode (LED1, OUTPUT);
-  pinMode (LED2, OUTPUT);
   pinMode(SW1, INPUT);
   pinMode(SW2, INPUT);
+  for (int i = 0; i < 5; i++) {
+    pinMode(leds[i], OUTPUT);
+  }
   Serial.begin(115200);
   dht.begin();
   Serial.println(client.isConnected());
@@ -52,19 +57,41 @@ void onConnectionEstablished() {
   client.subscribe("Clase_IoT/Paredes&Arceo/SignalRecieved", [](const String & payload) { //El tópico de señales recibidas por MQTT
     Serial.print("Señal MQQT Recibida!: ");
     Serial.println(payload);
-
-    if (payload == "1") {
-      digitalWrite(LED1, HIGH);
-      client.publish("Clase_IoT/Paredes&Arceo/LEDs", String("LED 1 Encendido"));
-      Serial.println("LED1 Encendido");
+    payback = payload.charAt(0);
+    switch (payback) {
+      case '1':
+        digitalWrite(leds[0], HIGH);
+        //client.publish("Clase_IoT/Paredes&Arceo/LEDs", String("LED 1 Encendido"));
+        //Serial.println("LED1 Encendido");
+        break;
+      case '2':
+        digitalWrite(leds[1], HIGH);
+        client.publish("Clase_IoT/Paredes&Arceo/LEDs", String("LED 2 Encendido"));
+        Serial.println("LED2 Encendido");
+        break;
+      case '3':
+        digitalWrite(leds[2], HIGH);
+        client.publish("Clase_IoT/Paredes&Arceo/LEDs", String("LED 3 Encendido"));
+        Serial.println("LED3 Encendido");
+        break;
+      case '4':
+        digitalWrite(leds[3], HIGH);
+        client.publish("Clase_IoT/Paredes&Arceo/LEDs", String("LED 4 Encendido"));
+        Serial.println("LED4 Encendido");
+        break;
+      case '5':
+        digitalWrite(leds[4], HIGH);
+        client.publish("Clase_IoT/Paredes&Arceo/LEDs", String("LED 5 Encendido"));
+        Serial.println("LED5 Encendido");
+        break;
+      case '0':
+        for (int i = 0; i < 5; i++) {
+          digitalWrite(leds[i], LOW);
+        }
+        client.publish("Clase_IoT/Paredes&Arceo/LEDs", String("LEDs Apagados"));
+        Serial.println("LEDs Apagados");
+        break;
     }
-
-    if (payload == "2") {
-      digitalWrite(LED2, HIGH);
-      client.publish("Clase_IoT/Paredes&Arceo/LEDs", String("LED 2 Encendido"));
-      Serial.println("LED2 Encendido");
-    }
-
   });
 }
 
@@ -78,21 +105,21 @@ void loop() {
     return; //evitamos cosas de tipo nan en la impresión.
   }
 
-  if (digitalRead(SW2)) {
-    String messHumid = "Nivel de Humedad detectado: " + String(h);
-    client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", String(messHumid));
-    Serial.println (messHumid);
-  }
+  //  if (digitalRead(SW2)) { .
+  //    String messHumid = "Nivel de Humedad detectado: " + String(h);
+  //    client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", String(messHumid));
+  //    Serial.println (messHumid);
+  //  }
 
   if (digitalRead(SW1)) {
-    String messTemp = "Nivel de Temperatura detectado: " + String(f);
+    String messTemp = "Nivel de Temperatura detectado: " + String(f) + " Grados Fahrenheit";
     client.publish("Clase_IoT/Paredes&Arceo/DHT/Temperatura", String(messTemp));
     Serial.println(messTemp);
   }
 
   //Para la fotoresistencia.
   float sensor = 3.3 / 4096.0 * analogRead(PinADC); //Voltaje = x / Flash Size
-  String messVolt = "El Voltaje en la fotoresistencia es de: " + String(sensor);
+  String messVolt = "El Voltaje en la fotoresistencia es de: " + String(sensor) + "V";
   client.publish("Clase_IoT/Paredes&Arceo/LDR", String(messVolt));
   Serial.println(messVolt);
 

@@ -5,7 +5,7 @@
          enciende el LED 1, al enviar “2” se enciende el LED 2 y así sucesivamente,
          todos se apagan cuando se envíe un “0”
       b. Hacer que cada vez que se apriete un botón, recibir la temperatura actual en
-         el smartphone y cuando se apriete el otro, la humedad. 
+         el smartphone y cuando se apriete el otro, la humedad.
 
   Código creado por los alumnos
   - Paredes Zamudio Luis Daniel @Wallsified
@@ -27,6 +27,8 @@
 #define SW1 15
 #define SW2 4
 
+int leds[5] = {14, 27, 26, 25, 33};
+
 BluetoothSerial BT; //Objeto Bluetooth.
 DHT dht(DHTPIN, DHTTYPE); //Objeto DHT
 
@@ -36,10 +38,11 @@ void setup() {
   BT.begin("ESP32_LED_BT"); // Nombre de tu Dispositivo Bluetooth y en modo esclavo
   Serial.println("Da bluchu dibais is redy to pel"); //yeah
   BT.register_callback(callback_function); //función callback de BT
-  pinMode (LED1, OUTPUT);
-  pinMode (LED2, OUTPUT);
   pinMode(SW1, INPUT);
   pinMode(SW2, INPUT);
+  for (int i = 0; i < 5; i++) {
+    pinMode(leds[i], OUTPUT);
+  }
 }
 
 void callback_function(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
@@ -56,44 +59,60 @@ void callback_function(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
     Serial.println("Datos recibidos");
     while (BT.available()) { // Mientras haya datos por recibir
       int incoming = BT.read(); // Lee un byte de los datos recibidos
-      
+
       Serial.print("Recibido: ");
       Serial.println(incoming);
 
-      if (incoming == 49) { // 1 en ASCII
-        digitalWrite(LED1, HIGH);
-        BT.println("LED1 Encendido");
+      if (incoming == 48) { // 0 en ASCII
+        for (int i = 0; i < 5; i++) {
+          digitalWrite(leds[i], LOW);
+        }
+        BT.println("LEDs Apagados");
       }
-      else if (incoming == 50) { //2 en ASCII
-        digitalWrite(LED2, HIGH);
-        BT.println("LED2 Encendido");
-      }
-      else if (incoming == 48) { // 0 en ASCII
-        digitalWrite(LED1, LOW);
-        digitalWrite(LED2, LOW);
-        BT.println("LED1 y/o LED2 Apagados");
+
+      switch (incoming) {
+        case 49:
+          digitalWrite(leds[0], HIGH);
+          BT.println("LED1 Encendido");
+          break;
+        case 50:
+          digitalWrite(leds[1], HIGH);
+          BT.println("LED2 Encendido");
+          break;
+        case 51:
+          digitalWrite(leds[2], HIGH);
+          BT.println("LED3 Encendido");
+          break;
+        case 52:
+          digitalWrite(leds[3], HIGH);
+          BT.println("LED4 Encendido");
+          break;
+        case 53:
+          digitalWrite(leds[4], HIGH);
+          BT.println("LED5 Encendido");
+          break;
       }
     }
   }
 }
 
-
 void loop() {
-  delay(2000);
   float h = dht.readHumidity(); //humidity
-  float f = dht.readTemperature(true); //
+  float f = dht.readTemperature(); //
 
-  if (isnan(h) || isnan(t) || isnan(f)) {
-    return; //evitamos cosas de tipo nan en la impresión. 
+  if (isnan(h) || isnan(f)) {
+    return; //evitamos cosas de tipo nan en la impresión.
   }
 
-  if (digitalRead(SW2)) { //here's where everything bugs
-    BT.print("Nivel de Humedad: ");
+  if (digitalRead(SW2 == LOW)) { //here's where everything bugs
+  BT.print("Nivel de Humedad: ");
     BT.println(h);
   }
 
   if (digitalRead(SW1)) {
-    BT.print("Temperatura en °F ");
+  BT.print("Temperatura en °F ");
     BT.println(f);
   }
+
+  delay(150);
 }
