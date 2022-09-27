@@ -27,6 +27,7 @@
 #define SW1 15
 #define SW2 4
 
+float tempCel, humid;
 int leds[5] = {14, 27, 26, 25, 33};
 
 BluetoothSerial BT; //Objeto Bluetooth.
@@ -34,12 +35,15 @@ DHT dht(DHTPIN, DHTTYPE); //Objeto DHT
 
 void setup() {
   Serial.begin(115200);
+  pinMode(SW1, INPUT);
+  pinMode(SW2, INPUT);
+  attachInterrupt(SW2, sensor, FALLING);
+  attachInterrupt(SW1, sensor2, RISING);
   dht.begin(); //iniciamos el objeto dht
   BT.begin("ESP32_LED_BT"); // Nombre de tu Dispositivo Bluetooth y en modo esclavo
   Serial.println("Da bluchu dibais is redy to pel"); //yeah
   BT.register_callback(callback_function); //función callback de BT
-  pinMode(SW1, INPUT);
-  pinMode(SW2, INPUT);
+
   for (int i = 0; i < 5; i++) {
     pinMode(leds[i], OUTPUT);
   }
@@ -96,23 +100,38 @@ void callback_function(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
   }
 }
 
-void loop() {
-  float h = dht.readHumidity(); //humidity
-  float f = dht.readTemperature(); //
 
-  if (isnan(h) || isnan(f)) {
+void sensor() {
+  delay (100);
+    BT.println("Temperatura: " );
+    BT.print((int) tempCel);
+  }
+
+void sensor2() {
+  delay (100);
+    BT.println("Humedad: ");
+    BT.print((int) humid);
+  }
+
+  void loop() {
+  humid = dht.readHumidity(); //humidity
+  tempCel = dht.readTemperature(); //
+  if (isnan(humid) || isnan(tempCel)) {
     return; //evitamos cosas de tipo nan en la impresión.
   }
+  delay(1000);
 
-  if (digitalRead(SW2 == LOW)) { //here's where everything bugs
-  BT.print("Nivel de Humedad: ");
-    BT.println(h);
-  }
+  //  String stado = (String) digitalRead(SW1);
+  //
+  //  if (digitalRead(SW1) != LOW) { //here's where everything bugs
+  //    BT.print("Nivel de Humedad: ");
+  //    BT.println(humid);
+  //  }
+  //
+  //  if (digitalRead(SW1)) {
+  //    BT.print("Temperatura en °F ");
+  //    BT.println(tempCel);
+  //  }
 
-  if (digitalRead(SW1)) {
-  BT.print("Temperatura en °F ");
-    BT.println(f);
-  }
 
-  delay(150);
 }

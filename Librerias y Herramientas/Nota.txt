@@ -1,0 +1,3 @@
+Estas carpetas deben de estar en la carpeta "Sketchbook" de Arduino. 
+En sistemas linux, ésta está en /home/Arduino/. 
+Una vez puestas, hay que reiniciar el IDE para poder ocuparlas. 
