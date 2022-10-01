@@ -37,8 +37,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(SW1, INPUT);
   pinMode(SW2, INPUT);
-  attachInterrupt(SW2, sensor, FALLING);
-  attachInterrupt(SW1, sensor2, RISING);
+  attachInterrupt(SW2, sensor, RISING); //estas funciones ayudan a detectar cambios (LOW/HIGH) en los botones.
+  attachInterrupt(SW1, sensor2, FALLING);
   dht.begin(); //iniciamos el objeto dht
   BT.begin("ESP32_LED_BT"); // Nombre de tu Dispositivo Bluetooth y en modo esclavo
   Serial.println("Da bluchu dibais is redy to pel"); //yeah
@@ -77,22 +77,27 @@ void callback_function(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
       switch (incoming) {
         case 49:
           digitalWrite(leds[0], HIGH);
+          Serial.println("LED1 Encendido");
           BT.println("LED1 Encendido");
           break;
         case 50:
           digitalWrite(leds[1], HIGH);
+          Serial.println("LED2 Encendido");
           BT.println("LED2 Encendido");
           break;
         case 51:
           digitalWrite(leds[2], HIGH);
+          Serial.println("LED3 Encendido");
           BT.println("LED3 Encendido");
           break;
         case 52:
           digitalWrite(leds[3], HIGH);
+          Serial.println("LED4 Encendido");
           BT.println("LED4 Encendido");
           break;
         case 53:
           digitalWrite(leds[4], HIGH);
+          Serial.println("LED5 Encendido");
           BT.println("LED5 Encendido");
           break;
       }
@@ -102,36 +107,25 @@ void callback_function(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
 
 
 void sensor() {
-  delay (100);
-    BT.println("Temperatura: " );
-    BT.print((int) tempCel);
-  }
+  BT.print("Nivel de Humedad: ");
+  BT.println(humid);
+  Serial.print("Nivel de Humedad: ");
+  Serial.println(humid);
+}
 
 void sensor2() {
-  delay (100);
-    BT.println("Humedad: ");
-    BT.print((int) humid);
-  }
+  BT.print("Temperatura en °C: ");
+  BT.println(tempCel);
+  Serial.print("Temperatura en °C: ");
+  Serial.println(humid);
+}
 
-  void loop() {
+void loop() {
   humid = dht.readHumidity(); //humidity
   tempCel = dht.readTemperature(); //
   if (isnan(humid) || isnan(tempCel)) {
     return; //evitamos cosas de tipo nan en la impresión.
   }
   delay(1000);
-
-  //  String stado = (String) digitalRead(SW1);
-  //
-  //  if (digitalRead(SW1) != LOW) { //here's where everything bugs
-  //    BT.print("Nivel de Humedad: ");
-  //    BT.println(humid);
-  //  }
-  //
-  //  if (digitalRead(SW1)) {
-  //    BT.print("Temperatura en °F ");
-  //    BT.println(tempCel);
-  //  }
-
 
 }

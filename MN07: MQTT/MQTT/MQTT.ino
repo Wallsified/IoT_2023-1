@@ -26,15 +26,16 @@
 #define PinADC 34 //LDR en la placa
 const float constante = 0.6; //para el voltaje
 int leds[5] = {14, 27, 26, 25, 33};
+float tempCel, humid;
 char payback; //hagamos que "payload" mande un char y de ahi a ascci again
 
 DHT dht(DHTPIN, DHTTYPE);
 
 EspMQTTClient client( //Objeto MQTT
-  "INFINITUMA6A4_2.4",
+  "Mark Wifi",
   //"Clase_IoT",           //SSID
   //"0123456789",        //Pass
-  "Zamudiov3!",
+  "achtzehnpfannkuchen18",
   "test.mosquitto.org",   // MQTT broker público (Mosquitto)
   "Paredes&Arceo",          // Nombre de indentificación del cliente
   1883                      // Puerto MQTT
@@ -45,6 +46,8 @@ void setup() {
   pinMode(PinADC, INPUT);
   pinMode(SW1, INPUT);
   pinMode(SW2, INPUT);
+  attachInterrupt(SW2, sensor, RISING); //estas funciones ayudan a detectar cambios (LOW/HIGH) en los botones.
+  attachInterrupt(SW1, sensor2, FALLING);
   for (int i = 0; i < 5; i++) {
     pinMode(leds[i], OUTPUT);
   }
@@ -95,26 +98,25 @@ void onConnectionEstablished() {
   });
 }
 
+void sensor() {
+  String messHumid = "Nivel de Humedad detectado: " + String(humid);
+  client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", String(messHumid));
+  Serial.println (messHumid);
+}
+
+void sensor2() {
+  String messTemp = "Nivel de Temperatura detectado: " + String(tempCel) + " Grados Fahrenheit";
+  client.publish("Clase_IoT/Paredes&Arceo/DHT/Temperatura", String(messTemp));
+  Serial.println(messTemp);
+}
+
+
 void loop() {
   client.loop();
-
-  float h = dht.readHumidity(); //humidity
-  float f = dht.readTemperature(true); //
-
-  if (isnan(h) || isnan(f)) {
+  humid = dht.readHumidity(); //humidity
+  tempCel = dht.readTemperature(); //
+  if (isnan(humid) || isnan(tempCel)) {
     return; //evitamos cosas de tipo nan en la impresión.
-  }
-
-  //  if (digitalRead(SW2)) { .
-  //    String messHumid = "Nivel de Humedad detectado: " + String(h);
-  //    client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", String(messHumid));
-  //    Serial.println (messHumid);
-  //  }
-
-  if (digitalRead(SW1)) {
-    String messTemp = "Nivel de Temperatura detectado: " + String(f) + " Grados Fahrenheit";
-    client.publish("Clase_IoT/Paredes&Arceo/DHT/Temperatura", String(messTemp));
-    Serial.println(messTemp);
   }
 
   //Para la fotoresistencia.
