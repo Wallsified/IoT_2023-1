@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Práctica #8: HTTP</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body>
+    <h3>Práctica #8: HTTP</h3>
+
+    <h2>Voltaje de la Fotoresistencia:</h2>
+    <br />
+    <p>
+      <span class="sensor">Voltaje Actual:</span>
+      <span id="SENSOR_ID">%SENSOR%</span>
+      <sup class="units">V</sup>
+    </p>
+    <br />
+    <h2>Control Led</h2>
+    <br />
+    <div class="column">
+      <h2>Prende el LED 1 o el 5</h2>
+      %BUTTONPLACEHOLDER%
+      <script>
+        function toggleCheckbox(element) {
+          var xhr = new XMLHttpRequest();
+          if (element.checked) {
+            xhr.open("GET", "/update?output=" + element.id + "&state=1", true);
+          } else {
+            xhr.open("GET", "/update?output=" + element.id + "&state=0", true);
+          }
+          xhr.send();
+        }
+      </script>
+    </div>
+
+    <div class="column">
+      <h2>
+        <p>Cambia el Brillo del LED #3:</p>
+        <p><span id="textSliderValue">Valor Actual: %SLIDERVALUE%</span></p>
+        <p>
+          <input
+            type="range"
+            onchange="updateSliderPWM(this)"
+            id="pwmSlider"
+            min="0"
+            max="255"
+            value="%SLIDERVALUE%"
+            step="1"
+            class="sliderA"
+          />
+        </p>
+        <script>
+          function updateSliderPWM(element) {
+            var sliderValue = document.getElementById("pwmSlider").value;
+            document.getElementById("textSliderValue").innerHTML = sliderValue;
+            console.log(sliderValue);
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/slider?value=" + sliderValue, true);
+            xhr.send();
+          }
+        </script>
+      </h2>
+    </div>
+    <script src="script.js"></script>
+
+    <!-- 
+          <section>
+      <article>
+        <footer>
+          <p2>
+            <a href="https://github.com/Wallsified/Pr-cticas_IoT_2023-1">
+              <img src=
+              https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpngimg.com%2Fuploads%2Fgithub%2Fgithub_PNG40.png&f=1&nofb=1&ipt=daeb8099dfa51bd96c5d5756091f1f6ad4468380f4d5c4a880e1b7193d56ad9b&ipo=images
+              style="width:40px;height:40px;padding:2mm;">
+            </a>
+          </p2>
+        </footer>
+      </article>
+    </section>
+
+     -->
+
+  </body>
+</html>

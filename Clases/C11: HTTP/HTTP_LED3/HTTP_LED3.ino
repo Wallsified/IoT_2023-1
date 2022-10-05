@@ -4,8 +4,8 @@
 #include "SPIFFS.h"
 
 //Credenciales Red-----------------------------
-const char* ssid = "Clase_IoT";
-const char* password = "0123456789";
+const char* ssid = "INFINITUMA6A4_2.4";
+const char* password = "Zamudiov3!";
 
 //LEDs GPIO-------------------------------------
 #define ledPinBlue 25

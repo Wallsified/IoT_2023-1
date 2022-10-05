@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "MN08: HTTP/data"
+			"path": "Clases/C11: HTTP"
 		},
 		{
-			"path": "Clases/C11: HTTP"
+			"path": "MN08: HTTP"
 		}
 	],
 	"settings": {}
