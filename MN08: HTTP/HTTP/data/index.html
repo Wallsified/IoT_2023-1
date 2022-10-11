@@ -6,40 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Práctica #8: HTTP</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="icon" href="data:," />
+    <script src="script.js"></script>
   </head>
-
   <body>
-    <h3>Práctica #8: HTTP</h3>
+    
+    <h3>
+      Práctica #8: HTTP
+    </h3>
 
-    <h2>Voltaje de la Fotoresistencia:</h2>
-    <br />
-    <p>
-      <span class="sensor">Voltaje Actual:</span>
+    <h2>
+      <span class="sensor">Voltaje Actual en el LDR:</span>
       <span id="SENSOR_ID">%SENSOR%</span>
       <sup class="units">V</sup>
-    </p>
-    <br />
-    <h2>Control Led</h2>
-    <br />
+    </h2>
+
     <div class="column">
-      <h2>Prende el LED 1 o el 5</h2>
-      %BUTTONPLACEHOLDER%
-      <script>
-        function toggleCheckbox(element) {
-          var xhr = new XMLHttpRequest();
-          if (element.checked) {
-            xhr.open("GET", "/update?output=" + element.id + "&state=1", true);
-          } else {
-            xhr.open("GET", "/update?output=" + element.id + "&state=0", true);
-          }
-          xhr.send();
-        }
-      </script>
+      <h2>Prende un LED ¿1 ó 5?</h2>
+      <p> %BUTTONPLACEHOLDER% </p>
     </div>
 
     <div class="column">
-      <h2>
-        <p>Cambia el Brillo del LED #3:</p>
+      <h2> Cambia el Brillo del LED #3: </h2>
         <p><span id="textSliderValue">Valor Actual: %SLIDERVALUE%</span></p>
         <p>
           <input
@@ -53,36 +41,21 @@
             class="sliderA"
           />
         </p>
-        <script>
-          function updateSliderPWM(element) {
-            var sliderValue = document.getElementById("pwmSlider").value;
-            document.getElementById("textSliderValue").innerHTML = sliderValue;
-            console.log(sliderValue);
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/slider?value=" + sliderValue, true);
-            xhr.send();
-          }
-        </script>
-      </h2>
     </div>
-    <script src="script.js"></script>
 
-    <!-- 
-          <section>
+    <br />
+    <section>
       <article>
         <footer>
           <p2>
             <a href="https://github.com/Wallsified/Pr-cticas_IoT_2023-1">
               <img src=
               https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpngimg.com%2Fuploads%2Fgithub%2Fgithub_PNG40.png&f=1&nofb=1&ipt=daeb8099dfa51bd96c5d5756091f1f6ad4468380f4d5c4a880e1b7193d56ad9b&ipo=images
-              style="width:40px;height:40px;padding:2mm;">
+              style="width:40px;height:40px;padding:2mm;bac">
             </a>
           </p2>
         </footer>
       </article>
     </section>
-
-     -->
-
   </body>
 </html>
