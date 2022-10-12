@@ -16,8 +16,8 @@
 #include "SPIFFS.h"
 
 // Credenciales Red
-const char* ssid = "Mark Wifi";
-const char* password = "achtzehnpfannkuchen18"; //achtzehnpfannkuchen18
+const char* ssid = "INFINITUMA6A4_2.4";
+const char* password = "Zamudiov3!"; //achtzehnpfannkuchen18
 
 // Constantes de la ejecución.
 const char* PARAM_INPUT_1 = "output";
