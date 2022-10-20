@@ -1,4 +1,4 @@
-/* Mini Práctica #6: Bluetooth
+/* Mini Práctica #7: MQTT
    Objetivos:
    Usando el protocolo MQTT y la aplicación MQTT Explorer o alguna otra parecida, realice lo siguiente:
       1. Encender los LED dependiendo el valor recibido mediante un tópico, es decir, al
