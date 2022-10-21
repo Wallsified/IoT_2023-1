@@ -1,4 +1,4 @@
-/* Mini Práctica #6: Bluetooth
+/* Mini Práctica #7: MQTT
    Objetivos:
    Usando el protocolo MQTT y la aplicación MQTT Explorer o alguna otra parecida, realice lo siguiente:
       1. Encender los LED dependiendo el valor recibido mediante un tópico, es decir, al
@@ -30,10 +30,10 @@ char payback; //hagamos que "payload" mande un char y de ahi a ascci again
 DHT dht(DHTPIN, DHTTYPE);
 
 EspMQTTClient client( //Objeto MQTT
-  "INFINITUMA6A4_2.4",
-  //"Clase_IoT",           //SSID
-  //"0123456789",        //Pass
-  "Zamudiov3!",
+  //"INFINITUMA6A4_2.4",
+  "Clase_IoT",           //SSID
+  "0123456789",        //Pass
+  //"Zamudiov3!",
   "test.mosquitto.org",   // MQTT broker público (Mosquitto)
   "Paredes&Arceo",          // Nombre de indentificación del cliente
   1883                      // Puerto MQTT
@@ -97,30 +97,28 @@ void onConnectionEstablished() {
 }
 
 void sensor() {
-  humid = dht.readHumidity(); //humidity
-  delay(200);
+  //  humid = dht.readHumidity(); //humidity
+  //  delay(200);
   if (isnan(humid)) {
-    //  client.publish("Clase_IoT/Paredes&Arceo/DHT/", "Nan Detectado, favor de presionar de nuevo");
-    //    Serial.println("Nan Detectado, favor de presionar de nuevo");//evitamos cosas de tipo nan en la impresión.
-    return;
+    client.publish("Clase_IoT/Paredes&Arceo/DHT/", "Nan Detectado, favor de presionar de nuevo");
+    Serial.println("Nan Detectado, favor de presionar de nuevo");//evitamos cosas de tipo nan en la impresión.
   }
   String messHumid = "Nivel de Humedad detectado: " ;
   String extraHumid = String (humid);
-  client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", extraHumid);
+  client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", String(extraHumid));
   Serial.println (messHumid + extraHumid);
 }
 
 void sensor2() {
-  tempCel = dht.readTemperature(); //
-  delay(200);
+  //  tempCel = dht.readTemperature(); //
+  //  delay(200);
   if (isnan(tempCel)) {
-//    client.publish("Clase_IoT/Paredes&Arceo/DHT/", "Nan Detectado, favor de presionar de nuevo");
-//    Serial.println("Nan Detectado, favor de presionar de nuevo");//evitamos cosas de tipo nan en la impresión.
-    return;
+    client.publish("Clase_IoT/Paredes&Arceo/DHT/", "Nan Detectado, favor de presionar de nuevo");
+    Serial.println("Nan Detectado, favor de presionar de nuevo");//evitamos cosas de tipo nan en la impresión.
   }
   String messTemp = "Nivel de Temperatura detectado: ";
   String extraTemp = String (tempCel);
-  client.publish("Clase_IoT/Paredes&Arceo/DHT/Temperatura", extraTemp);
+  client.publish("Clase_IoT/Paredes&Arceo/DHT/Temperatura", String(extraTemp));
   Serial.println(messTemp + extraTemp);
 }
 
@@ -128,9 +126,11 @@ void sensor2() {
 void loop() {
   client.loop();
   //Para la fotoresistencia.
+  humid = dht.readHumidity(); //humidity
+  tempCel = dht.readTemperature();
   float sensor = 3.3 / 4096.0 * analogRead(PinADC); //Voltaje = x / Flash Size
   String messVolt = "El Voltaje en la fotoresistencia es de: " + String(sensor) + "V";
   client.publish("Clase_IoT/Paredes&Arceo/LDR", String(messVolt));
   Serial.println(messVolt);
-  delay(1500);
+  delay(1000);
 }
