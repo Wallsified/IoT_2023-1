@@ -141,6 +141,17 @@ void setup() {
     request->send(SPIFFS, "/script.js", "text/js");
   });
 
+  // Imágenes --------------------------------
+  server.on("/github.png", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/github.png", "image/png");
+  });
+
+  server.on("/ESP32.png", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/ESP32.png", "image/png");
+  });
+
+  
+
   // WIP- Request entre ESP32 -> Switches HTTP -> ON/OFF LEDs
   server.on("/update", HTTP_GET, [] (AsyncWebServerRequest * request) {
     String inputMessage1;
