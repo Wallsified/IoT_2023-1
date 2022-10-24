@@ -54,10 +54,10 @@ void loop() {
       Serial.println("Led 1 apagado");
       String respuesta3 = "LED apagado";
       myBot.sendMessage(msg.sender.id, respuesta3);
+    } else {
+      myBot.sendMessage(msg.sender.id, "Intenta de nuevo con /start");
     }
 
-  } else {
-      myBot.sendMessage(msg.sender.id, "Intenta de nuevo con /start");
   }
 
 }
