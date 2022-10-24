@@ -12,7 +12,7 @@ La placa usada fue una [ESP32 en el IDE de Arduino](https://github.com/espressif
 ### Dependencias del repo
 - IDE de Arduino
 - Python 3.7+ (junto a dependecias a instalar en pip: esptool, pyserial)
-
+- Demasiadas Liberías (el repo incluye la carpeta sketchbook con ellas, solo debes colocarla en su sitio según tu OS)
 
 ### Algunos enlaces útiles
 - [IoT con el ESP](http://esp32.net/)
