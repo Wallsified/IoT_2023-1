@@ -12,14 +12,6 @@
 
 */
 
-//Usamos esta parte para poder ver que hace el ESP32 en el monitor serial
-#define ENABLE_DEBUG
-
-#ifdef ENABLE_DEBUG
-#define DEBUG_ESP_PORT Serial
-#define NDEBUG
-#endif
-
 //Como Sinric trabaja con otros modelos de ESP, este ifdef añade la libreria Wifi si si es el ESP32
 #ifdef ESP32
 #include <WiFi.h>
@@ -32,8 +24,8 @@
 #include <SinricPro.h>
 #include <SinricProSwitch.h>
 
-#define WIFI_SSID         "INFINITUMA6A4_2.4"
-#define WIFI_PASS         "Zamudiov3!"
+#define WIFI_SSID         "Clase_IoT"
+#define WIFI_PASS         "0123456789"
 #define APP_KEY           "f0c7aa17-b734-49b1-98ef-e8f046661a1b"  //constantes de Sinric    
 #define APP_SECRET        "1da18685-857c-46e7-ae49-964e9548a03b-8044e8aa-d3ec-4669-815e-2511833f0d2d"
 
@@ -55,7 +47,7 @@ std::vector<LEDInfo> leds = {
 bool onPowerState(const String &deviceId, bool &state) {
   for (auto &led : leds) {            //Para cada "led" (nombre de nuestro "iterador") en nuestro vector "leds"...
     if (deviceId == led.deviceId) {
-      Serial.printf("El LED %s está %s\r\n", led.name.c_str(), state ? "encendido" : "apagado");
+      Serial.printf("El %s está %s\r\n", led.name.c_str(), state ? "encendido" : "apagado");
       digitalWrite(led.pin, state);
       return true;
     }
