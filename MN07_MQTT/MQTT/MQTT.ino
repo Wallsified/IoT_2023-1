@@ -31,8 +31,8 @@ DHT dht(DHTPIN, DHTTYPE);
 
 EspMQTTClient client( //Objeto MQTT
   //"INFINITUMA6A4_2.4",
-  "Clase_IoT",           //SSID
-  "0123456789",        //Pass
+  "pcpuma",           //SSID
+  "mango2022",        //Pass
   //"Zamudiov3!",
   "test.mosquitto.org",   // MQTT broker público (Mosquitto)
   "Paredes&Arceo",          // Nombre de indentificación del cliente
@@ -42,10 +42,10 @@ EspMQTTClient client( //Objeto MQTT
 
 void setup() {
   pinMode(PinADC, INPUT);
-  pinMode(SW1, INPUT);
-  pinMode(SW2, INPUT);
-  attachInterrupt(SW2, sensor, RISING); //estas funciones ayudan a detectar cambios (LOW/HIGH) en los botones.
-  attachInterrupt(SW1, sensor2, FALLING);
+  pinMode(SW1, INPUT_PULLUP); //Nota: el ponerlos como INPUT_PULLUP, en este caso al menos, hace lo mismo que añadir las interrupciones.
+  pinMode(SW2, INPUT_PULLUP);
+  //  attachInterrupt(SW2, sensor, RISING); //estas funciones ayudan a detectar cambios (LOW/HIGH) en los botones.
+  //  attachInterrupt(SW1, sensor2, FALLING);
   for (int i = 0; i < 5; i++) {
     pinMode(leds[i], OUTPUT);
   }
@@ -96,41 +96,68 @@ void onConnectionEstablished() {
   });
 }
 
+
+int lastState = HIGH;
+int actualStateLED1, actualStateLED2;
+
+
+void switchOne() { //Método que hace la lectura y ejecuta la sequencia del SW1
+  actualStateLED1 = digitalRead(SW1);
+  if (lastState == HIGH && actualStateLED1 == HIGH)
+    sensor();
+}
+
+void switchTwo() { //Método que hace la lectura y ejecuta la sequencia del SW2
+  actualStateLED2 = digitalRead(SW2);
+  if (lastState == HIGH && actualStateLED2 == LOW)
+    sensor2();
+}
+
+//Sequencia SW1
 void sensor() {
-  //  humid = dht.readHumidity(); //humidity
-  //  delay(200);
-  if (isnan(humid)) {
-    client.publish("Clase_IoT/Paredes&Arceo/DHT/", "Nan Detectado, favor de presionar de nuevo");
-    Serial.println("Nan Detectado, favor de presionar de nuevo");//evitamos cosas de tipo nan en la impresión.
-  }
+
   String messHumid = "Nivel de Humedad detectado: " ;
-  String extraHumid = String (humid);
-  client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", String(extraHumid));
-  Serial.println (messHumid + extraHumid);
-}
+  String extraHumid = messHumid + String (humid);
 
-void sensor2() {
-  //  tempCel = dht.readTemperature(); //
-  //  delay(200);
-  if (isnan(tempCel)) {
-    client.publish("Clase_IoT/Paredes&Arceo/DHT/", "Nan Detectado, favor de presionar de nuevo");
-    Serial.println("Nan Detectado, favor de presionar de nuevo");//evitamos cosas de tipo nan en la impresión.
+  if (isnan(humid)) {
+    client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", "Nan Detectado, favor de presionar de nuevo");
+    Serial.println("Nan Detectado, favor de presionar de nuevo");
   }
-  String messTemp = "Nivel de Temperatura detectado: ";
-  String extraTemp = String (tempCel);
-  client.publish("Clase_IoT/Paredes&Arceo/DHT/Temperatura", String(extraTemp));
-  Serial.println(messTemp + extraTemp);
+  else {
+    client.publish("Clase_IoT/Paredes&Arceo/DHT/Humedad", String(extraHumid));
+    Serial.println (extraHumid);
+  }
 }
 
+//Sequencia del SW2
+void sensor2() {
+  String messTemp = "Nivel de Temperatura detectado: ";
+  String extraTemp = messTemp + String (tempCel);
 
-void loop() {
-  client.loop();
-  //Para la fotoresistencia.
-  humid = dht.readHumidity(); //humidity
-  tempCel = dht.readTemperature();
+  if (isnan(tempCel)) {
+    client.publish("Clase_IoT/Paredes&Arceo/DHT/Temperatura", "Nan Detectado, favor de presionar de nuevo");
+    Serial.println("Nan Detectado, favor de presionar de nuevo");
+  }
+  else {
+    client.publish("Clase_IoT/Paredes&Arceo/DHT/Temperatura", String(extraTemp));
+    Serial.println(extraTemp);
+  }
+}
+
+//Método que da el voltaje actual en el LDR
+void resistance() {
   float sensor = 3.3 / 4096.0 * analogRead(PinADC); //Voltaje = x / Flash Size
   String messVolt = "El Voltaje en la fotoresistencia es de: " + String(sensor) + "V";
   client.publish("Clase_IoT/Paredes&Arceo/LDR", String(messVolt));
   Serial.println(messVolt);
+}
+
+void loop() {
+  client.loop();
+  humid = dht.readHumidity(); //humidity
+  tempCel = dht.readTemperature();
+  resistance();
+  switchOne();
+  switchTwo();
   delay(1000);
 }
