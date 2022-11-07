@@ -33,9 +33,9 @@ float setPoint = 0;
 
 CTBot myBot;
 
-String ssid = "IZZI-5044";//"Clase_IoT";
-String pass =  "189C27645044"; //"0123456789";
-String token = "5533017969:AAHjuVYZHczNLjjzORZA1G9RJ3TTrOzlQmo";
+String ssid = "Clase_IoT";
+String pass =  "0123456789";
+String token = "5533017969:AAHjuVYZHczNLjjzORZA1G9RJ3TTrOzlQmo"; //Token del bot
 
 void setup() {
   Serial.begin(115200);
@@ -51,7 +51,7 @@ void setup() {
   delay(500);
 
   if (myBot.testConnection()) {
-    Serial.print("Conectado");
+    Serial.print("Conectado");//Comprobamos que el bot este conectado.
   }
 
 }
@@ -68,7 +68,7 @@ void loop() {
   outPut = (kp * P_Error) + (ki * I_Error) + (kd * D_Error); //Se calcula la salida del controlador
 
   lastError = P_Error;
-  previousTime = currentTime;
+  previousTime = currentTime; //Actualizamos los valores de error y tiempo
 
   dacWrite(PinDAC, outPut);
 
@@ -80,30 +80,30 @@ void loop() {
 
   TBMessage msg;
 
-  if (myBot.getNewMessage(msg)) {
+  if (myBot.getNewMessage(msg)) { //Revisamos si el bot recivio un mensaje
 
-    if (msg.text.equalsIgnoreCase("/start")) {
+    if (msg.text.equalsIgnoreCase("/start")) { //comando para comprobar que esta en servicio el bot 
       myBot.sendMessage(msg.sender.id, "Bienvenido, ya puede mandar sus instrucciones");
 
-    } else  if (msg.text.equalsIgnoreCase("/resistencia")) {
+    } else  if (msg.text.equalsIgnoreCase("/resistencia")) { //comando para pedir la fotoresistencia.
 
       float sensor = 3.3 / 4096.0 * analogRead(PinPhoto); //Voltaje = x / Flash Size
       String messVolt = "El Voltaje en la fotoresistencia es de: " + String(sensor) + "V";
       myBot.sendMessage(msg.sender.id, messVolt);
 
-    } else  if (msg.text.equalsIgnoreCase("/enciende")) {
+    } else  if (msg.text.equalsIgnoreCase("/enciende")) { //Comando para encender el LED 1
 
       digitalWrite(LED, HIGH);
       String respuesta2 = "LED encendido";
       myBot.sendMessage(msg.sender.id, respuesta2);
 
-    } else  if (msg.text.equalsIgnoreCase("/apaga")) {
+    } else  if (msg.text.equalsIgnoreCase("/apaga")) { //Comando para apagar el LED 1.
 
       digitalWrite(LED, LOW);
       String respuesta3 = "LED apagado";
       myBot.sendMessage(msg.sender.id, respuesta3);
 
-    } else  if (msg.text.toFloat() >= 0) {
+    } else  if (msg.text.toFloat() > 0 && msg.text.toFloat() <= 3.3) { //Aceptamos numeros entre 0 y 3.3 para setpoint
       float newPot = msg.text.toFloat();
       setPoint = newPot;
       myBot.sendMessage(msg.sender.id, "Setpoint establecido");
