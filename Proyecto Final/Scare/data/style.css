@@ -156,17 +156,14 @@ html {
   color: #111;
   cursor: pointer;
   display: flex;
-  font-size: 19px;
+  font-size: 18px;
   height: 355px;
   justify-content: center;
-  line-height: 24px;
+  line-height: 20px;
   width: 550px;
-  padding: 0 55px;
+  padding: 0 40px;
   position: relative;
   text-align: center;
-  text-decoration: none;
-  user-select: none;
-  -webkit-user-select: none;
   touch-action: manipulation;
 }
 
@@ -174,7 +171,7 @@ html {
   background-color: #111;
   border-radius: 15px;
   content: "";
-  display: block;
+  display: inline-block;
   height: 355px;
   left: 0;
   width: 100%;
@@ -202,4 +199,10 @@ html {
   .instructions {
     padding: 0 40px;
   }
+}
+
+
+.decibel {
+  position: inherit;
+  
 }

@@ -4,19 +4,19 @@
   - Paredes Zamudio Luis Daniel @Wallsified
   - González Arceo Carlos Eduardo @Carlos-crea
 
- Notas al 10/nov/22: 
- - Se necesita un método que regrese el valor de los decibeles
- eso es lo que podemos mandar a JavaScript para interactuar con los 
- segmentos de la batería, creo. 
+  Notas al 10/nov/22:
+  - Se necesita un método que regrese el valor de los decibeles
+  eso es lo que podemos mandar a JavaScript para interactuar con los
+  segmentos de la batería, creo.
 
- - Averiguar si lo que está dentro de loop() se puede hacer como 
- un método externo, simplemente para organizar mejor las partes. 
+  - Averiguar si lo que está dentro de loop() se puede hacer como
+  un método externo, simplemente para organizar mejor las partes.
 
- - El método "processor" necesita cambiarse si o si. Solo copie y pegué
- lo de la práctica de HTTP para que el compilador me dijera si hay errores
- (que si los hay, pero no de compilación. )
+  - El método "processor" necesita cambiarse si o si. Solo copie y pegué
+  lo de la práctica de HTTP para que el compilador me dijera si hay errores
+  (que si los hay, pero no de compilación. )
 
- - Se puede cambiar la fuente en la pantalla para farolear aun más. 
+  - Se puede cambiar la fuente en la pantalla para farolear aun más.
 
 
 */
@@ -27,13 +27,14 @@
 #include "SPIFFS.h"
 #include "Wire.h"
 #include "Adafruit_GFX.h"
-#include <Adafruit_SH110X.h>
+#include "Adafruit_SH110X.h"
 
 
 //Constantes de la Ejecución.
-int leds[5] = {33, 25, 26, 27, 14}; //Igual y no los ocupamos. 
-const char* ssid = "Clase_IoT";//"INFINITUMA6A4_2.4";//"Mark Wifi";
+int leds[5] = {33, 25, 26, 27, 14};   //Igual y no los ocupamos.
+const char* ssid = "Clase_IoT"; //"Clase_IoT";//"INFINITUMA6A4_2.4";//"Mark Wifi";
 const char* password = "0123456789";//"Zamudiov3!";//"achtzehnpfannkuchen18";
+String decibels = "0";
 
 
 //Stuff de la pantalla.
@@ -51,7 +52,7 @@ AsyncWebServer server(80);
 
 
 void start_screen() {
-  display.begin(i2c_Address, true);              //OLED display start
+  display.begin(i2c_Address, true);              
   display.clearDisplay();
   display.setCursor(0, 0);
   display.setTextSize(1);
@@ -61,12 +62,28 @@ void start_screen() {
   display.clearDisplay();
 }
 
+void writeScreen(float decibelLevel) {
+  display.setCursor(0, 0);
+  display.setTextSize(1.5);
+  display.print(decibelLevel);
+  display.print(" dB");
+
+  for (int x = 16; x < 165; x = x + 17) {
+    display.drawLine(x, 32, x, 27, SH110X_WHITE); //NO CAMBIAR ESO
+  }
+  display.drawRoundRect(0, 32, 120, 19, 6, SH110X_WHITE);       //borde de la bateria en pantalla
+  int r = map(decibelLevel, 0, 120, 1, 120);                       //la bateria tiene el borde la pantalla con eso
+  display.fillRoundRect(1, 33, r, 18, 6, SH110X_WHITE);         //y ahora la acompletamos por "dentro"
+  display.display();
+  display.clearDisplay();
+
+}
+
 void setup_wifi() {
   delay(10);
   Serial.println();
   Serial.print("Conectando a: ");
   Serial.println(ssid);
-
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -90,16 +107,48 @@ void setup_wifi() {
 // Acciones a realizar durante la ejecución.
 String processor(const String& var) {
 
-  if (var == "BUTTONPLACEHOLDER") { //switches HTTP
-    String buttons = "";
-    return buttons;
+  if (var == "DECIBEL") {
+    return decibels;
   }
-
-  if (var == "SLIDERVALUE") { //slider HTTP
-    return "hello";
-  }
-  return String(); //evidentemente todo esto se cambia
+  return "hola";
 }
+
+float readDecibels() {
+  unsigned long startMillis = millis();                  // Start of sample window
+  float peakToPeak = 0;                                  // peak-to-peak level
+
+  unsigned int signalMax = 0;                            
+  unsigned int signalMin = 1024;                         
+
+  // collect data for 50 mS
+  while (millis() - startMillis < sampleWindow)
+  {
+    sample = analogRead(0);                             //lectura del microfono
+    if (sample < 1024)                                  // quitamos lecturas no necesarias. 
+    {
+      if (sample > signalMax)
+      {
+        signalMax = sample;                           // solo val. max.
+      }
+      else if (sample < signalMin)
+      {
+        signalMin = sample;                           // solo val. min. 
+      }
+    }
+  }
+  peakToPeak = signalMax - signalMin;                    // max - min = amplitud peak-peak 
+  float db = map(peakToPeak, 20, 900, 49.5, 90);         //calibramos a que si nos de los decibeles. 
+  return db;
+}
+
+
+//Aqui debería ir lo de la lectura del sensor,creo.
+String ReadSensor() {
+  float sensorVal = readDecibels();
+  Serial.println(sensorVal);
+  return String(sensorVal);
+}
+
 
 void setup() {
   //Iniciamos los Leds en output usando un bucle for para recorrer el arreglo.
@@ -119,7 +168,7 @@ void setup() {
 
   //Ruta raíz del archivo HTML-----------------
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, "/index.html", String(), false, processor);
+    request->send(SPIFFS, "/index2.html", String(), false, processor);
   });
 
   //Archivo CSS--------------------------------
@@ -129,55 +178,28 @@ void setup() {
 
   //  Archivo JS--------------------------------
   server.on("/help.js", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, "/script.js", "text/js");
+    request->send(SPIFFS, "/help.js", "text/js");
   });
 
   // Imágenes --------------------------------
-  server.on("/door_batt.png", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, "/door_off.png", "image/png");
+  server.on("/door.png", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/door.png", "image/png");
+  });
+
+  // Enviar información sobre los decibeles.
+  server.on("/decibel", HTTP_GET, [](AsyncWebServerRequest * request) {
+    Serial.println(ReadSensor().c_str());
+    request->send(200, "text/plain", ReadSensor().c_str());
   });
 }
 
 
 void loop() {
-  //este es el loop de lectura del micrófono. 
-  unsigned long startMillis = millis();                  // Start of sample window
-  float peakToPeak = 0;                                  // peak-to-peak level
-
-  unsigned int signalMax = 0;                            //minimum value
-  unsigned int signalMin = 1024;                         //maximum value
-
-  // collect data for 50 mS
-  while (millis() - startMillis < sampleWindow)
-  {
-    sample = analogRead(0);                             //get reading from microphone
-    if (sample < 1024)                                  // toss out spurious readings
-    {
-      if (sample > signalMax)
-      {
-        signalMax = sample;                           // save just the max levels
-      }
-      else if (sample < signalMin)
-      {
-        signalMin = sample;                           // save just the min levels
-      }
-    }
-  }
-  peakToPeak = signalMax - signalMin;                    // max - min = peak-peak amplitude
-  float db = map(peakToPeak, 20, 900, 49.5, 90);         //calibrate for deciBels
-  display.setCursor(0, 0);                               
-  display.setTextSize(1.5);                              
-  display.print(db);                                     //write calibrated deciBels
-  display.print(" dB");                                  //write units
+  float dbToScreen = readDecibels();
+  writeScreen(dbToScreen);
+  delay(500);
 
 
-  for (int x = 16; x < 165; x = x + 17) {                
-    display.drawLine(x, 32, x, 27, SH110X_WHITE); //NO CAMBIAR ESO
-  }
-  display.drawRoundRect(0, 32, 120, 19, 6, SH110X_WHITE);       //draw outline of bar graph
-  int r = map(db, 0, 120, 1, 120);                       //set bar graph for width of screen
-  display.fillRoundRect(1, 33, r, 18, 6, SH110X_WHITE);         //draw bar graph with a width of r
-  display.display();                                     
-  display.clearDisplay();                                
+
 
 }
