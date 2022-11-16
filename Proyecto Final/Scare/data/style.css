@@ -50,30 +50,37 @@ html {
 
 .segment-1 {
   top: 104.4mm;
+  opacity: 0%; /* Aplicar a todas asi JavaScript lo modifica, hopefully */
 }
 
 .segment-2 {
   top: 100mm;
+  opacity: 0%; 
 }
 
 .segment-3{
   top: 97mm;
+  opacity: 0%; 
 }
 
 .segment-4{
   top: 94mm;
+  opacity: 0%; 
 }
 
 .segment-5{
   top: 91mm;
+  opacity: 0%; 
 }
 
 .segment-6{
   top: 88mm;
+  opacity: 0%; 
 }
 
 .segment-7{
   top: 85mm;
+  opacity: 0%; 
 }
 
 .columnText {

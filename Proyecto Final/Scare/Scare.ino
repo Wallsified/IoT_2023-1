@@ -18,6 +18,10 @@
 
   - Se puede cambiar la fuente en la pantalla para farolear aun más.
 
+  Nota al 15/nov/22
+
+  Parece que lo anterior ya se logró, pero no lo borro si no hasta estar 
+  100% seguro de que eso haya funcionado. 
 
 */
 
@@ -29,13 +33,10 @@
 #include "Adafruit_GFX.h"
 #include "Adafruit_SH110X.h"
 
-
 //Constantes de la Ejecución.
-int leds[5] = {33, 25, 26, 27, 14};   //Igual y no los ocupamos.
 const char* ssid = "Clase_IoT"; //"Clase_IoT";//"INFINITUMA6A4_2.4";//"Mark Wifi";
 const char* password = "0123456789";//"Zamudiov3!";//"achtzehnpfannkuchen18";
 String decibels = "0";
-
 
 //Stuff de la pantalla.
 #define SCREEN_WIDTH 128
@@ -43,13 +44,11 @@ String decibels = "0";
 #define OLED_RESET -1       // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define i2c_Address 0x3c
-
 const int sampleWindow = 50;                              // Sample window width in mS (50 mS = 20Hz)
 unsigned int sample;
 
 //Objeto AsyncWebServer, puerto 80-------------
 AsyncWebServer server(80);
-
 
 void start_screen() {
   display.begin(i2c_Address, true);              
@@ -71,12 +70,12 @@ void writeScreen(float decibelLevel) {
   for (int x = 16; x < 165; x = x + 17) {
     display.drawLine(x, 32, x, 27, SH110X_WHITE); //NO CAMBIAR ESO
   }
+
   display.drawRoundRect(0, 32, 120, 19, 6, SH110X_WHITE);       //borde de la bateria en pantalla
   int r = map(decibelLevel, 0, 120, 1, 120);                       //la bateria tiene el borde la pantalla con eso
   display.fillRoundRect(1, 33, r, 18, 6, SH110X_WHITE);         //y ahora la acompletamos por "dentro"
   display.display();
   display.clearDisplay();
-
 }
 
 void setup_wifi() {
@@ -110,17 +109,16 @@ String processor(const String& var) {
   if (var == "DECIBEL") {
     return decibels;
   }
-  return "hola";
+  return String();
 }
 
 float readDecibels() {
   unsigned long startMillis = millis();                  // Start of sample window
   float peakToPeak = 0;                                  // peak-to-peak level
-
   unsigned int signalMax = 0;                            
   unsigned int signalMin = 1024;                         
 
-  // collect data for 50 mS
+  // Consideramos 50 ms para tomar la muestra de db. 
   while (millis() - startMillis < sampleWindow)
   {
     sample = analogRead(0);                             //lectura del microfono
@@ -141,14 +139,12 @@ float readDecibels() {
   return db;
 }
 
-
 //Aqui debería ir lo de la lectura del sensor,creo.
 String ReadSensor() {
   float sensorVal = readDecibels();
   Serial.println(sensorVal);
   return String(sensorVal);
 }
-
 
 void setup() {
   //Iniciamos los Leds en output usando un bucle for para recorrer el arreglo.
@@ -193,13 +189,8 @@ void setup() {
   });
 }
 
-
 void loop() {
   float dbToScreen = readDecibels();
   writeScreen(dbToScreen);
   delay(500);
-
-
-
-
 }
