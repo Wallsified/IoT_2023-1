@@ -34,8 +34,8 @@
 #include "Adafruit_SH110X.h"
 
 //Constantes de la Ejecución.
-const char* ssid = "Clase_IoT"; //"Clase_IoT";//"INFINITUMA6A4_2.4";//"Mark Wifi";
-const char* password = "0123456789";//"Zamudiov3!";//"achtzehnpfannkuchen18";
+const char* ssid = "INFINITUMA6A4_2.4"; //"Clase_IoT";//"INFINITUMA6A4_2.4";//"Mark Wifi";
+const char* password = "Zamudiov3!";//"Zamudiov3!";//"achtzehnpfannkuchen18";
 String decibels = "0";
 
 //Stuff de la pantalla.
@@ -121,7 +121,7 @@ float readDecibels() {
   // Consideramos 50 ms para tomar la muestra de db. 
   while (millis() - startMillis < sampleWindow)
   {
-    sample = analogRead(0);                             //lectura del microfono
+    sample = analogRead(34);                             //lectura del microfono
     if (sample < 1024)                                  // quitamos lecturas no necesarias. 
     {
       if (sample > signalMax)
@@ -135,7 +135,7 @@ float readDecibels() {
     }
   }
   peakToPeak = signalMax - signalMin;                    // max - min = amplitud peak-peak 
-  float db = map(peakToPeak, 20, 900, 49.5, 90);         //calibramos a que si nos de los decibeles. 
+  float db = map(sample, 0, 900, 49.5, 90);         //calibramos a que si nos de los decibeles. 
   return db;
 }
 
@@ -149,9 +149,7 @@ String ReadSensor() {
 void setup() {
   //Iniciamos los Leds en output usando un bucle for para recorrer el arreglo.
   Serial.begin(115200);
-  for (int i = 0; i < 5; i++) {
-    pinMode(leds[i], OUTPUT);
-  }
+  
   setup_wifi();
   start_screen();
   server.begin();

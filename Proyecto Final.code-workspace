@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "Extras_PF"
+		},
+		{
+			"path": "../ScreamMachine"
 		}
 	]
 }

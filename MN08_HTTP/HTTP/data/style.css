@@ -64,7 +64,7 @@ hr{
 }
 
 .columnText {
-  float: left;
+  float: right;
   width: 50%;
   border-spacing: 15px;
   text-shadow: 0 3px 10px var(--black-coffee);

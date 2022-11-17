@@ -45,7 +45,7 @@ void loop()
   // collect data for 50 mS
   while (millis() - startMillis < sampleWindow)
   {
-    sample = analogRead(0);                             //get reading from microphone
+    sample = digitalRead(36);                             //get reading from microphone
     if (sample < 1024)                                  // toss out spurious readings
     {
       if (sample > signalMax)
