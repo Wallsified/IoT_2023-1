@@ -26,61 +26,132 @@ html {
   flex-direction: column;
   justify-content: space-around;
   margin: 0px 0px 0px 46.5mm;
-  width: 33px;
-  height: 33px;
+  width: 35px;
+  height: 35px;
   background: red;
   border-radius: 120px;
   position: absolute;
-  top: 19mm;
-  opacity: 100%;
-}
-
-[class*="segment-"] {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  width: 16px;
-  height: 20px;
-  margin: 0px 0px 0px 104.2mm;
-  background: red;
-  border-radius: 80px;
-  position: absolute;
-  opacity: 100%;
+  top: 15mm;
+  opacity: 0%;
 }
 
 .segment-1 {
-  top: 104.4mm;
-  opacity: 0%; /* Aplicar a todas asi JavaScript lo modifica, hopefully */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 20px;
+  height: 22px;
+  margin: 0px 0px 0px 104mm;
+  background: red;
+  border-radius: 10px;
+  position: absolute;
+  top: 99.5mm;
+  opacity: 0%; 
+  animation: fadeIn 3s;
 }
 
 .segment-2 {
-  top: 100mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 20px;
+  height: 22px;
+  margin: 0px 0px 0px 104mm;
+  background: red;
+  border-radius: 10px;
+  position: absolute;
+  top: 96.5mm;
   opacity: 0%; 
+  animation: fadeIn 3s;
 }
 
 .segment-3{
-  top: 97mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 20px;
+  height: 22px;
+  margin: 0px 0px 0px 104mm;
+  background: red;
+  border-radius: 10px;
+  position: absolute;
+  top: 93.5mm;
   opacity: 0%; 
+  animation: fadeIn 3s;
 }
 
 .segment-4{
-  top: 94mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 20px;
+  height: 22px;
+  margin: 0px 0px 0px 104mm;
+  background: red;
+  border-radius: 10px;
+  position: absolute;
+  top: 90.5mm;
   opacity: 0%; 
+  animation: fadeIn 3s;
 }
 
 .segment-5{
-  top: 91mm;
-  opacity: 0%; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 20px;
+  height: 22px;
+  margin: 0px 0px 0px 104mm;
+  background: red;
+  border-radius: 10px;
+  position: absolute;
+  top: 87.5mm;
+  opacity: 0%;
+  animation: fadeIn 3s; 
 }
 
 .segment-6{
-  top: 88mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 20px;
+  height: 22px;
+  margin: 0px 0px 0px 104mm;
+  background: red;
+  border-radius: 10px;
+  position: absolute;
+  top: 84.5mm;
   opacity: 0%; 
+  animation: fadeIn 3s;
 }
 
 .segment-7{
-  top: 85mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 20px;
+  height: 22px;
+  margin: 0px 0px 0px 104mm;
+  background: red;
+  border-radius: 10px;
+  position: absolute;
+  top: 81.5mm;
   opacity: 0%; 
+  animation: fadeIn 3s;
+}
+
+.segment-1::after,
+.segment-2::after,
+.segment-3::after,
+.segment-4::after,
+.segment-5::after,
+.segment-6::after,
+.segment-7::after{
+  -webkit-transition: opacity 2s ease-in-out;
+  -moz-transition: opacity 2s ease-in-out;
+  -ms-transition: opacity 2s ease-in-out;
+  -o-transition: opacity 2s ease-in-out;
+  transition: opacity 2s ease-in-out;
 }
 
 .columnText {
@@ -202,8 +273,8 @@ html {
   }
 }
 
-
-.decibel {
-  position: inherit;
-  
+span#DECIBEL_ID {
+  --position: inherit;
+  --display: inline-block;
+  float: inline-end;
 }

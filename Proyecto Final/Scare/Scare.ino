@@ -4,24 +4,16 @@
   - Paredes Zamudio Luis Daniel @Wallsified
   - González Arceo Carlos Eduardo @Carlos-crea
 
-  Notas al 10/nov/22:
-  - Se necesita un método que regrese el valor de los decibeles
-  eso es lo que podemos mandar a JavaScript para interactuar con los
-  segmentos de la batería, creo.
+¿Qué hace el proyecto?
 
-  - Averiguar si lo que está dentro de loop() se puede hacer como
-  un método externo, simplemente para organizar mejor las partes.
+Al final de Monsters University, el juego final de las
+"Sustolimpiadas" consiste en una cámara de simulación 
+de sustos, en donde el equipo que más puntos-por-susto
+consiga, será nombrado campeón. 
 
-  - El método "processor" necesita cambiarse si o si. Solo copie y pegué
-  lo de la práctica de HTTP para que el compilador me dijera si hay errores
-  (que si los hay, pero no de compilación. )
-
-  - Se puede cambiar la fuente en la pantalla para farolear aun más.
-
-  Nota al 15/nov/22
-
-  Parece que lo anterior ya se logró, pero no lo borro si no hasta estar 
-  100% seguro de que eso haya funcionado. 
+Nosotros hicimos una aproximación a dicho juego usando 
+lo que aprendimos en el curso de Introducción a Ciencias de
+la Computación y algo de creativad inocente.
 
 */
 
@@ -41,34 +33,34 @@ String decibels = "0";
 //Stuff de la pantalla.
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-#define OLED_RESET -1       // Reset pin # (or -1 if sharing Arduino reset pin)
+#define OLED_RESET -1       // Reset pin 
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define i2c_Address 0x3c
-const int sampleWindow = 50;                              // Sample window width in mS (50 mS = 20Hz)
-unsigned int sample;
+const int sampleWindow = 50;  // La pantalla se refresca cada 50ms
+unsigned int sample; //Valor de la lectura del micrófono. 
 
 //Objeto AsyncWebServer, puerto 80-------------
 AsyncWebServer server(80);
 
 void start_screen() {
-  display.begin(i2c_Address, true);              
-  display.clearDisplay();
-  display.setCursor(0, 0);
-  display.setTextSize(1);
-  display.setTextColor(SH110X_WHITE);
-  display.display();
+  display.begin(i2c_Address, true); //Inicia pantalla              
+  display.clearDisplay(); //Limpiamos lo que pudo estar antes. 
+  display.setCursor(0, 0); //Coordenadas de inicio. 
+  display.setTextSize(1); //Tamaño de letra
+  display.setTextColor(SH110X_WHITE); //Color de letra
+  display.display(); 
   delay(1000);
   display.clearDisplay();
 }
 
 void writeScreen(float decibelLevel) {
   display.setCursor(0, 0);
-  display.setTextSize(1.5);
-  display.print(decibelLevel);
+  display.setTextSize(1.8);
+  display.print(decibelLevel); //Imprimimos el valor del micrófono. 
   display.print(" dB");
 
   for (int x = 16; x < 165; x = x + 17) {
-    display.drawLine(x, 32, x, 27, SH110X_WHITE); //NO CAMBIAR ESO
+    display.drawLine(x, 32, x, 27, SH110X_WHITE); //División de las partes del grito. 
   }
 
   display.drawRoundRect(0, 32, 120, 19, 6, SH110X_WHITE);       //borde de la bateria en pantalla
@@ -113,10 +105,10 @@ String processor(const String& var) {
 }
 
 float readDecibels() {
-  unsigned long startMillis = millis();                  // Start of sample window
-  float peakToPeak = 0;                                  // peak-to-peak level
+  unsigned long startMillis = millis();                  // no podemos usar delay() en este caso. 
+  float peakToPeak = 0;                                  // puntoAPunto. Es el rango de lecturas a trabajar. 
   unsigned int signalMax = 0;                            
-  unsigned int signalMin = 1024;                         
+  unsigned int signalMin = 700;                         //Aunque el valor máximo es 1024, bajarlo a 700 ayuda a hacerlo más sensible.
 
   // Consideramos 50 ms para tomar la muestra de db. 
   while (millis() - startMillis < sampleWindow)
@@ -135,11 +127,11 @@ float readDecibels() {
     }
   }
   peakToPeak = signalMax - signalMin;                    // max - min = amplitud peak-peak 
-  float db = map(sample, 0, 900, 49.5, 90);         //calibramos a que si nos de los decibeles. 
+  float db = map(peakToPeak, 20, 900, 49.5, 90);         //calibramos a que si nos de los decibeles. 
   return db;
 }
 
-//Aqui debería ir lo de la lectura del sensor,creo.
+//Leemos la información que nos manda el micrófono. 
 String ReadSensor() {
   float sensorVal = readDecibels();
   Serial.println(sensorVal);
@@ -162,7 +154,7 @@ void setup() {
 
   //Ruta raíz del archivo HTML-----------------
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, "/index2.html", String(), false, processor);
+    request->send(SPIFFS, "/index.html", String(), false, processor);
   });
 
   //Archivo CSS--------------------------------
@@ -172,7 +164,7 @@ void setup() {
 
   //  Archivo JS--------------------------------
   server.on("/help.js", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, "/help.js", "text/js");
+    request->send(SPIFFS, "/server.js", "text/js");
   });
 
   // Imágenes --------------------------------
@@ -187,6 +179,7 @@ void setup() {
   });
 }
 
+//Loop para ir escribiendo en pantalla la información calculada. 
 void loop() {
   float dbToScreen = readDecibels();
   writeScreen(dbToScreen);
